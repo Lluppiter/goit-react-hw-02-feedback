@@ -1,26 +1,61 @@
-import user from '../data/user.json';
-import data from '../data/data.json';
-import friends from '../data/friends.json';
-import transactions from '../data/transactions.json';
-import { Profile } from './Profile/Profile';
-import { Statistics } from './Statistics/Statistics';
-import { FriendsList } from './FriendList/FriendList';
-import { TransactionHistory } from './TransactionHistory/TransactionHistory';
+import { Component } from 'react';
+import { Statistics } from '../components/Statistics/Statistics.jsx';
+import { FeedBackOptions } from './Feedback/FeedBackOptions.jsx';
+import { Section } from './Section/Section.jsx';
+import { NotificationMessage } from './NotificationMessage/NotificationMessage.jsx';
 
-export const App = () => {
-  return (
-    <>
-      <Profile
-        username={user.username}
-        tag={user.tag}
-        location={user.location}
-        avatar={user.avatar}
-        stats={user.stats}
-      />
-      <Statistics title="Upload stats" stats={data} />
-      <Statistics stats={data} />
-      <FriendsList friends={friends} />
-      <TransactionHistory items={transactions} />
-    </>
-  );
-};
+export class App extends Component {
+  state = {
+    good: 0,
+    neutral: 0,
+    bad: 0,
+    total: 0,
+    percentage: 0,
+  };
+
+  countTotalFeedback = () => {
+    this.setState(prevState => {
+      return {
+        total: prevState.good + prevState.neutral + prevState.bad,
+      };
+    });
+  };
+  countPositiveFeedbackPercentage = () => {
+    this.setState(prevState => {
+      return {
+        percentage: Math.round((prevState.good / prevState.total) * 100),
+      };
+    });
+  };
+  handleIncrement = e => {
+    this.setState(prevState => {
+      const { name } = e.target;
+      return {
+        [name]: prevState[name] + 1,
+      };
+    });
+    this.countTotalFeedback();
+    this.countPositiveFeedbackPercentage();
+  };
+
+  render() {
+    const { good, neutral, bad } = this.state;
+    return (
+      <>
+        <Section title="Please leave feedback">
+          <FeedBackOptions
+            options={Object.keys(this.state)}
+            onLeaveFeedback={this.handleIncrement}
+          />
+        </Section>
+        <Section title="Statistics">
+          {good !== 0 || neutral !== 0 || bad !== 0 ? (
+            <Statistics props={this.state} />
+          ) : (
+            <NotificationMessage />
+          )}
+        </Section>
+      </>
+    );
+  }
+}
