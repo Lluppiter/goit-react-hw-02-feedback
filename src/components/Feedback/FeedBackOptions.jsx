@@ -3,8 +3,7 @@ export const FeedBackOptions = ({ options, onLeaveFeedback }) => {
   return (
     <>
       <div className={styles.buttonBlock}>
-        {options.map(option => {
-          console.log(onLeaveFeedback);
+        {options.forEach(option => {
           if (option !== 'total' && option !== 'percentage') {
             return (
               <button
