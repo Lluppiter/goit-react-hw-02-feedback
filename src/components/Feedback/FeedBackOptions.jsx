@@ -1,11 +1,14 @@
 import styles from '../Feedback/FeedBackOptions.module.css';
+import PropTypes from 'prop-types';
+
 export const FeedBackOptions = ({ options, onLeaveFeedback }) => {
   return (
     <>
       <div className={styles.buttonBlock}>
-        {options.forEach(option => {
+        {options.map(option => {
+          let feedbackButton;
           if (option !== 'total' && option !== 'percentage') {
-            return (
+            feedbackButton = (
               <button
                 name={option}
                 key={option}
@@ -16,8 +19,14 @@ export const FeedBackOptions = ({ options, onLeaveFeedback }) => {
               </button>
             );
           }
+          return feedbackButton;
         })}
       </div>
     </>
   );
+};
+
+FeedBackOptions.propTypes = {
+  options: PropTypes.array.isRequired,
+  onLeaveFeedback: PropTypes.func.isRequired,
 };
